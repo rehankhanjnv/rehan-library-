@@ -34,8 +34,8 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 .lnk{background:none;border:0;color:var(--amber);font:inherit;font-size:.88rem;cursor:pointer;padding:10px 0 0;text-decoration:underline}
 #msg{min-height:1.4em;margin:12px 0 0;font-size:.9rem;text-align:center}
 #msg.err{color:var(--red)}#msg.ok{color:var(--teal)}
-.digits{display:flex;gap:7px;justify-content:center;margin-top:12px}
-.digits input{width:44px;height:52px;text-align:center;font:700 1.4rem system-ui;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:0}
+.digits{display:flex;gap:5px;justify-content:center;margin-top:12px}
+.digits input{flex:1;min-width:0;max-width:44px;height:52px;text-align:center;font:700 1.25rem system-ui;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:0}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -93,7 +93,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 (function(){
 var SB=window.supabase.createClient("https://olredfevioettdnzsdmk.supabase.co","sb_publishable_uXzZdR_6Akz2-EC5GtXl3Q_kMGDK8X3");
 var $=function(i){return document.getElementById(i)};
-var owl=$("owl"),pups=[$("pupL"),$("pupR")],EMAIL=/^\S+@\S+\.\S+$/,N=6,recovering=/type=recovery/.test(location.hash);
+var owl=$("owl"),pups=[$("pupL"),$("pupR")],EMAIL=/^\S+@\S+\.\S+$/,N=8,recovering=/type=recovery/.test(location.hash);
 
 function look(x,y){pups.forEach(function(p){p.style.transform="translate("+x+"px,"+y+"px)"})}
 function msg(t,ok){var m=$("msg");m.textContent=t||"";m.className=ok?"ok":"err"}
