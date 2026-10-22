@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rehan Library · Login</title>
+<style>
+:root{--bg:#0e1514;--card:#172120;--ink:#e9eeec;--mute:#92a09b;--line:#2c3938;--teal:#3fa28b;--amber:#e8b23a;--red:#e07a66}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(520px 360px at 50% 0,#27331f 0,transparent 70%),var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
+.wrap{width:100%;max-width:400px}
+h1{font:700 1.5rem/1.2 Georgia,serif;text-align:center;margin:0 0 2px}
+.sub{text-align:center;color:var(--mute);font-size:.9rem;margin:0 0 6px}
+#owl{display:block;width:150px;height:150px;margin:0 auto -18px;position:relative;z-index:2}
+#owl .pupil{transition:transform .12s}
+#owl .wing{transition:transform .35s cubic-bezier(.3,1.3,.5,1)}
+#owl.cover .wing.l{transform:translate(2px,-84px)}
+#owl.cover .wing.r{transform:translate(-2px,-84px)}
+#owl.happy .lid{opacity:1}
+.lid{opacity:0;transition:opacity .2s}
+#owl.shake{animation:sh .4s}
+@keyframes sh{20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+@media(prefers-reduced-motion:reduce){#owl,#owl *{animation:none!important;transition:none!important}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 18px 18px;position:relative;z-index:1}
+.tabs{display:flex;gap:4px;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:14px}
+.tabs button{flex:1;border:0;background:none;color:var(--mute);font:inherit;font-weight:600;padding:9px;border-radius:7px;cursor:pointer;min-height:42px}
+.tabs button[aria-selected=true]{background:var(--card);color:var(--ink)}
+label{display:block;font-size:.85rem;font-weight:600;margin:10px 0 4px}
+input.t{width:100%;font:inherit;padding:12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.go{width:100%;margin-top:16px;padding:13px;border:0;border-radius:10px;background:var(--teal);color:#0d1514;font:inherit;font-weight:700;cursor:pointer;min-height:46px}
+.go:disabled{opacity:.6;cursor:wait}
+.lnk{background:none;border:0;color:var(--amber);font:inherit;font-size:.88rem;cursor:pointer;padding:10px 0 0;text-decoration:underline}
+#msg{min-height:1.4em;margin:12px 0 0;font-size:.9rem;text-align:center}
+#msg.err{color:var(--red)}#msg.ok{color:var(--teal)}
+.digits{display:flex;gap:7px;justify-content:center;margin-top:12px}
+.digits input{width:44px;height:52px;text-align:center;font:700 1.4rem system-ui;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:0}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <svg id="owl" viewBox="0 0 200 200" aria-hidden="true">
+    <path d="M52 62 L58 22 L88 48 Z M148 62 L142 22 L112 48 Z" fill="#5a402e"/>
+    <ellipse cx="100" cy="122" rx="64" ry="64" fill="#6b4f3a"/>
+    <ellipse cx="100" cy="148" rx="38" ry="38" fill="#d9c3a3"/>
+    <circle cx="74" cy="92" r="28" fill="#f3ead8"/><circle cx="126" cy="92" r="28" fill="#f3ead8"/>
+    <g class="pupil" id="pupL"><circle cx="74" cy="92" r="12" fill="#1b1b1b"/><circle cx="78" cy="88" r="4" fill="#fff"/></g>
+    <g class="pupil" id="pupR"><circle cx="126" cy="92" r="12" fill="#1b1b1b"/><circle cx="130" cy="88" r="4" fill="#fff"/></g>
+    <path class="lid" d="M48 94 Q74 72 100 94 Q126 72 152 94 Q126 84 100 98 Q74 84 48 94Z" fill="#6b4f3a"/>
+    <path d="M91 108 L109 108 L100 126 Z" fill="#e8b23a"/>
+    <ellipse class="wing l" cx="62" cy="168" rx="22" ry="30" fill="#5a402e"/>
+    <ellipse class="wing r" cx="138" cy="168" rx="22" ry="30" fill="#5a402e"/>
+  </svg>
+  <div class="card">
+    <h1>Rehan Library</h1>
+    <p class="sub">Sign in to continue</p>
+
+    <div id="vLogin">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" aria-selected="true" data-tab="pw">Password</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="otp">Email code</button>
+      </div>
+      <form id="fPw" novalidate>
+        <label for="pwEmail">Email</label><input class="t" id="pwEmail" type="email" autocomplete="username" inputmode="email">
+        <label for="pwPass">Password</label><input class="t" id="pwPass" type="password" autocomplete="current-password">
+        <button class="go" id="bPw">Sign in</button>
+        <button class="lnk" type="button" id="bForgot">Forgot password?</button>
+      </form>
+      <form id="fOtp" hidden novalidate>
+        <label for="otpEmail">Email</label><input class="t" id="otpEmail" type="email" autocomplete="email" inputmode="email">
+        <button class="go" id="bSend">Send code</button>
+        <div id="codeBox" hidden>
+          <div class="digits" id="digits"></div>
+          <button class="go" id="bVerify" type="button">Verify and sign in</button>
+          <button class="lnk" type="button" id="bResend">Resend code</button>
+        </div>
+      </form>
+    </div>
+
+    <form id="vNew" hidden novalidate>
+      <p class="sub">Choose a new password</p>
+      <label for="np">New password (6+ characters)</label><input class="t" id="np" type="password" autocomplete="new-password">
+      <button class="go" id="bNew">Save password</button>
+    </form>
+    <p id="msg" role="status" aria-live="polite"></p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+var SB=window.supabase.createClient("https://olredfevioettdnzsdmk.supabase.co","sb_publishable_uXzZdR_6Akz2-EC5GtXl3Q_kMGDK8X3");
+var $=function(i){return document.getElementById(i)};
+var owl=$("owl"),pups=[$("pupL"),$("pupR")],EMAIL=/^\S+@\S+\.\S+$/,N=6,recovering=/type=recovery/.test(location.hash);
+
+function look(x,y){pups.forEach(function(p){p.style.transform="translate("+x+"px,"+y+"px)"})}
+function msg(t,ok){var m=$("msg");m.textContent=t||"";m.className=ok?"ok":"err"}
+function busy(b){document.querySelectorAll(".go").forEach(function(x){x.disabled=b})}
+function fail(e){
+  var t=(e&&e.message)||"Something went wrong. Try again.";
+  if(/invalid login/i.test(t))t="Email or password is wrong.";
+  else if(/rate limit|too many|seconds/i.test(t))t="Too many tries. Please wait a minute and try again.";
+  else if(/token|expired|invalid/i.test(t))t="That code is wrong or has expired. Request a new one.";
+  else if(/signups not allowed|not found/i.test(t))t="No account found for this email. Ask the library admin to add you.";
+  msg(t);owl.classList.remove("shake");void owl.offsetWidth;owl.classList.add("shake")
+}
+async function done(user){
+  owl.classList.remove("cover");owl.classList.add("happy");look(0,0);
+  msg("Signed in. Opening your dashboard…",true);
+  var r=await SB.from("profiles").select("role").eq("id",user.id).single();
+  var role=r.data&&r.data.role;
+  if(role==="admin"){setTimeout(function(){location.href="Rehan_Library_Admin.html"},900)}
+  else{msg("Signed in. The student area is coming soon.",true)}
+}
+
+/* owl follows the typing and the finger */
+$("pwEmail").addEventListener("input",function(e){var n=Math.min(e.target.value.length,24);look(-8+n*0.67,3)});
+$("otpEmail").addEventListener("input",function(e){var n=Math.min(e.target.value.length,24);look(-8+n*0.67,3)});
+$("pwPass").addEventListener("focus",function(){owl.classList.add("cover")});
+$("pwPass").addEventListener("blur",function(){owl.classList.remove("cover")});
+document.addEventListener("pointermove",function(e){
+  if(document.activeElement&&document.activeElement.tagName==="INPUT")return;
+  var r=owl.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);
+  look(Math.max(-8,Math.min(8,dx/20)),Math.max(-6,Math.min(8,dy/20)))
+});
+
+/* tabs */
+document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){
+  document.querySelectorAll(".tabs button").forEach(function(x){x.setAttribute("aria-selected",x===b)});
+  $("fPw").hidden=b.dataset.tab!=="pw";$("fOtp").hidden=b.dataset.tab!=="otp";msg("")}});
+
+/* password sign in */
+$("fPw").onsubmit=async function(e){
+  e.preventDefault();var em=$("pwEmail").value.trim(),pw=$("pwPass").value;
+  if(!EMAIL.test(em))return fail({message:"Enter a valid email address."});
+  if(pw.length<6)return fail({message:"Password must be at least 6 characters."});
+  busy(true);msg("");var r=await SB.auth.signInWithPassword({email:em,password:pw});busy(false);
+  if(r.error)return fail(r.error);done(r.data.user)
+};
+$("bForgot").onclick=async function(){
+  var em=$("pwEmail").value.trim();
+  if(!EMAIL.test(em))return fail({message:"Type your email above first."});
+  busy(true);var r=await SB.auth.resetPasswordForEmail(em,{redirectTo:location.href.split("#")[0]});busy(false);
+  if(r.error)return fail(r.error);
+  msg("If that email is registered, a reset link has been sent.",true)
+};
+
+/* email code (OTP) */
+var dg=$("digits");
+for(var i=0;i<N;i++){var d=document.createElement("input");d.maxLength=1;d.inputMode="numeric";d.autocomplete=i?"off":"one-time-code";d.setAttribute("aria-label","Digit "+(i+1));dg.appendChild(d)}
+var ds=dg.querySelectorAll("input");
+ds.forEach(function(d,i){
+  d.addEventListener("focus",function(){look(0,6)});
+  d.addEventListener("input",function(){d.value=d.value.replace(/\D/g,"");if(d.value&&ds[i+1])ds[i+1].focus()});
+  d.addEventListener("keydown",function(e){if(e.key==="Backspace"&&!d.value&&ds[i-1])ds[i-1].focus()});
+  d.addEventListener("paste",function(e){var t=(e.clipboardData.getData("text")||"").replace(/\D/g,"").slice(0,N);if(!t)return;e.preventDefault();t.split("").forEach(function(c,k){ds[k].value=c});ds[Math.min(t.length,N-1)].focus()})
+});
+var cool=0,timer;
+function cooldown(){cool=30;$("bResend").disabled=true;clearInterval(timer);timer=setInterval(function(){cool--;$("bResend").textContent=cool>0?"Resend code in "+cool+"s":"Resend code";if(cool<=0){clearInterval(timer);$("bResend").disabled=false}},1000);$("bResend").textContent="Resend code in 30s"}
+async function sendCode(){
+  var em=$("otpEmail").value.trim();
+  if(!EMAIL.test(em))return fail({message:"Enter a valid email address."});
+  busy(true);msg("");var r=await SB.auth.signInWithOtp({email:em,options:{shouldCreateUser:false}});busy(false);
+  if(r.error)return fail(r.error);
+  $("codeBox").hidden=false;$("bSend").hidden=true;ds[0].focus();cooldown();msg("We sent a code to "+em+".",true)
+}
+$("fOtp").onsubmit=function(e){e.preventDefault();sendCode()};
+$("bResend").onclick=function(){if(cool<=0)sendCode()};
+$("bVerify").onclick=async function(){
+  var tok=Array.prototype.map.call(ds,function(x){return x.value}).join("");
+  if(tok.length<N)return fail({message:"Enter all "+N+" digits of the code."});
+  busy(true);var r=await SB.auth.verifyOtp({email:$("otpEmail").value.trim(),token:tok,type:"email"});busy(false);
+  if(r.error)return fail(r.error);done(r.data.user)
+};
+
+/* new password after reset link */
+function showNew(){$("vLogin").hidden=true;$("vNew").hidden=false;msg("")}
+$("np").addEventListener("focus",function(){owl.classList.add("cover")});
+$("np").addEventListener("blur",function(){owl.classList.remove("cover")});
+$("vNew").onsubmit=async function(e){
+  e.preventDefault();var p=$("np").value;
+  if(p.length<6)return fail({message:"Password must be at least 6 characters."});
+  busy(true);var r=await SB.auth.updateUser({password:p});busy(false);
+  if(r.error)return fail(r.error);done(r.data.user)
+};
+SB.auth.onAuthStateChange(function(ev){if(ev==="PASSWORD_RECOVERY")showNew()});
+if(recovering)showNew();
+else SB.auth.getSession().then(function(r){if(r.data&&r.data.session)done(r.data.session.user)});
+})();
+</script>
+</body>
+</html>

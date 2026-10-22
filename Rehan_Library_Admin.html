@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rehan Library · Admin</title>
+<style>
+:root{--bg:#f1eee6;--card:#fffdf8;--ink:#1d2a2a;--mute:#6b746f;--line:#ddd6c6;--teal:#2f7d6b;--teal-ink:#fff;--amber:#e0a526;--red:#b4432f;--soft:#e7f1ee;color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#121918;--card:#1a2322;--ink:#e9eeec;--mute:#92a09b;--line:#2c3938;--teal:#3fa28b;--teal-ink:#0d1514;--amber:#e8b23a;--red:#e07a66;--soft:#1f2f2c;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:max(16px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom))}
+main{max-width:720px;margin:0 auto}
+.side{position:fixed;inset:0 auto 0 0;width:240px;background:var(--card);border-right:1px solid var(--line);padding:max(18px,env(safe-area-inset-top)) 12px 18px;display:flex;flex-direction:column;gap:4px;z-index:20;transform:translateX(-100%);visibility:hidden}
+.side.open{transform:none;visibility:visible}
+.brand{font:700 1.2rem/1.2 Georgia,serif;padding:4px 10px 0}
+.brand small{display:block;font:400 .82rem/1.4 system-ui,sans-serif;color:var(--mute);margin:2px 0 14px}
+.side button,.side a{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:left;font:inherit;font-weight:600;color:var(--ink);background:none;border:0;border-left:4px solid transparent;border-radius:8px;padding:11px 10px;text-decoration:none;cursor:pointer;min-height:44px}
+.side button[aria-current=page]{background:var(--soft);border-left-color:var(--teal)}
+.side a{color:var(--mute);margin-top:auto}
+.badge{background:var(--amber);color:#1d2a2a;font-size:.78rem;border-radius:99px;padding:1px 8px}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10;display:none}
+.scrim.on{display:block}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.bar h1{margin:0}
+@media(min-width:860px){.side{transform:none;visibility:visible}.scrim,.scrim.on{display:none}.menu{display:none!important}main{margin-left:260px;max-width:none;padding-right:8px}main>*{max-width:720px}}
+h1{font:700 1.7rem/1.2 Georgia,"Times New Roman",serif;margin:8px 0 2px}
+h2{font:700 1.05rem/1.3 Georgia,serif;margin:22px 0 8px}
+.sub{color:var(--mute);margin:0 0 14px;font-size:.92rem}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:.9rem}
+.stat b{font-size:1.15rem}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:6px 0 4px}
+.tabs button{flex:1;background:none;border:0;border-bottom:3px solid transparent;padding:10px 4px;font:inherit;font-weight:600;color:var(--mute);cursor:pointer}
+.tabs button[aria-selected=true]{color:var(--ink);border-color:var(--teal)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px}
+.row.today{border-color:var(--amber);border-width:2px}
+.row.missed{border-color:var(--red)}
+.top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.name{font-weight:700}
+.amt{font-weight:700;white-space:nowrap}
+.meta{color:var(--mute);font-size:.88rem}
+.remark{margin:8px 0 0;padding:8px 10px;background:var(--soft);border-radius:8px;font-size:.9rem}
+.tag{display:inline-block;font-size:.78rem;font-weight:700;padding:2px 8px;border-radius:99px;margin-left:6px;background:var(--amber);color:#1d2a2a}
+.tag.red{background:var(--red);color:#fff}
+.btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+button.b{font:inherit;font-size:.88rem;font-weight:600;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;min-height:40px}
+button.b.main{background:var(--teal);color:var(--teal-ink);border-color:var(--teal)}
+button.b.danger{color:var(--red)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.empty{color:var(--mute);padding:18px 4px;text-align:center}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);width:min(92vw,420px);padding:18px}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+label{display:block;font-size:.88rem;font-weight:600;margin:10px 0 4px}
+input,select,textarea{width:100%;font:inherit;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.err{color:var(--red);font-size:.85rem;min-height:1.2em;margin:6px 0 0}
+.log{font-size:.9rem}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--teal);color:var(--teal-ink);padding:10px 16px;border-radius:9px;font-size:.9rem;display:none;max-width:90%}
+@media(prefers-reduced-motion:no-preference){.toast.show{animation:t .2s ease-out}@keyframes t{from{opacity:0;transform:translate(-50%,8px)}}}
+</style>
+</head>
+<body>
+<aside class="side" id="side" aria-label="Main menu">
+  <div class="brand">Rehan Library<small>Admin · Bhaktal ki Chowki, Bharatpur Road, Alwar</small></div>
+  <button data-t="dues" aria-current="page">Fees due <span class="badge" id="nDue">0</span></button>
+  <button data-t="students">Students</button>
+  <button data-t="sent">Sent messages</button>
+  <a href="Rehan_Library_Seat_Map.html">Seat map</a>
+</aside>
+<div class="scrim" id="scrim"></div>
+<main>
+  <div class="bar"><button class="b menu" id="menu" aria-label="Open menu" aria-expanded="false">Menu</button><h1 id="pageTitle">Fees due</h1></div>
+  <div class="stats">
+    <div class="stat"><b id="sStud">0</b> students</div>
+    <div class="stat"><b id="sDue">0</b> with dues</div>
+    <div class="stat"><b id="sAmt">₹0</b> pending</div>
+  </div>
+  <section id="p-dues"></section>
+  <section id="p-students" hidden></section>
+  <section id="p-sent" hidden></section>
+</main>
+
+<dialog id="dRemark">
+  <h2 style="margin-top:0" id="rTitle">Add remark</h2>
+  <label for="rText">What did the student say?</label>
+  <textarea id="rText" rows="3" placeholder="Will pay on the 25th"></textarea>
+  <label for="rDate">Reminder date</label>
+  <input id="rDate" type="date">
+  <p class="err" id="rErr"></p>
+  <div class="btns"><button class="b main" id="rSave">Save remark</button><button class="b" id="rClear">Remove remark</button><button class="b" data-close>Cancel</button></div>
+</dialog>
+
+<dialog id="dStud">
+  <h2 style="margin-top:0">Add student</h2>
+  <label for="sName">Name</label><input id="sName" autocomplete="off">
+  <label for="sPhone">Mobile number (10 digits)</label><input id="sPhone" inputmode="numeric" maxlength="10">
+  <label for="sMail">Email (optional)</label><input id="sMail" type="email">
+  <label for="sSeat">Seat number (1–184)</label><input id="sSeat" inputmode="numeric">
+  <label for="sPlan">Plan</label>
+  <select id="sPlan"><option value="500">Full-time · ₹500/month</option><option value="300">Half-time · ₹300/month</option></select>
+  <label for="sFee">Monthly fee (change if negotiated)</label><input id="sFee" inputmode="numeric">
+  <label for="sPaid">Fees paid up to (month)</label><input id="sPaid" type="month">
+  <p class="err" id="sErr"></p>
+  <div class="btns"><button class="b main" id="sSave">Save student</button><button class="b" data-close>Cancel</button></div>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+var KEY="rehanLibraryAdmin.v1";
+var $=function(i){return document.getElementById(i)};
+function ymd(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function ym(d){return ymd(d).slice(0,7)}
+function addDays(n){var d=new Date();d.setDate(d.getDate()+n);return ymd(d)}
+function monthsBack(n){var d=new Date();d.setDate(1);d.setMonth(d.getMonth()-n);return ym(d)}
+var NOW=ym(new Date()),TODAY=ymd(new Date());
+function seed(){
+  return{nextId:7,students:[
+    {id:1,name:"Aman Sharma",phone:"9876500001",email:"",seat:12,fee:500,paidUpTo:monthsBack(2),remark:{text:"Will pay on the day his father sends money",date:TODAY}},
+    {id:2,name:"Pooja Yadav",phone:"9876500002",email:"pooja@example.com",seat:47,fee:300,paidUpTo:monthsBack(1),remark:null},
+    {id:3,name:"Vikram Singh",phone:"9876500003",email:"",seat:101,fee:500,paidUpTo:monthsBack(3),remark:{text:"Said he will pay on Saturday",date:addDays(-2)}},
+    {id:4,name:"Neha Meena",phone:"9876500004",email:"",seat:150,fee:400,paidUpTo:NOW,remark:null},
+    {id:5,name:"Rahul Gurjar",phone:"9876500005",email:"",seat:178,fee:500,paidUpTo:monthsBack(1),remark:{text:"Salary comes next week",date:addDays(5)}},
+    {id:6,name:"Sana Khan",phone:"9876500006",email:"sana@example.com",seat:30,fee:300,paidUpTo:NOW,remark:null}
+  ],sent:[]};
+}
+var db;
+try{db=JSON.parse(localStorage.getItem(KEY))}catch(e){db=null}
+if(!db||!db.students)db=seed();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+function mDiff(a,b){var x=a.split("-"),y=b.split("-");return(+y[0]-+x[0])*12+(+y[1]-+x[1])}
+function dueMonths(s){return Math.max(0,mDiff(s.paidUpTo,NOW))}
+function dueAmt(s){return dueMonths(s)*s.fee}
+function inr(n){return"₹"+n.toLocaleString("en-IN")}
+function esc(t){var d=document.createElement("div");d.textContent=t;return d.innerHTML}
+function fmt(iso){var p=iso.split("-");return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString("en-IN",{day:"numeric",month:"short"})}
+function toast(m){var t=$("toast");t.textContent=m;t.style.display="block";t.classList.remove("show");void t.offsetWidth;t.classList.add("show");clearTimeout(toast.h);toast.h=setTimeout(function(){t.style.display="none"},2600)}
+
+function card(s){
+  var r=s.remark,cls="row",tag="";
+  if(r){if(r.date===TODAY){cls+=" today";tag='<span class="tag">Promised today</span>'}else if(r.date<TODAY){cls+=" missed";tag='<span class="tag red">Promise missed</span>'}}
+  var m=dueMonths(s);
+  return'<div class="'+cls+'"><div class="top"><div><span class="name">'+esc(s.name)+'</span>'+tag+'<div class="meta">Seat '+s.seat+' · '+m+(m===1?" month":" months")+' due · '+s.phone+'</div></div><div class="amt">'+inr(dueAmt(s))+'</div></div>'+
+  (r?'<div class="remark">“'+esc(r.text)+'” — pay by '+fmt(r.date)+'</div>':'')+
+  '<div class="btns"><button class="b main" data-a="wa" data-id="'+s.id+'">Remind on WhatsApp</button>'+
+  (s.email?'<button class="b" data-a="mail" data-id="'+s.id+'">Email</button>':'')+
+  '<button class="b" data-a="rem" data-id="'+s.id+'">'+(r?"Edit remark":"Add remark")+'</button>'+
+  '<button class="b" data-a="paid" data-id="'+s.id+'">Mark paid</button></div></div>'}
+
+function renderDues(){
+  var list=db.students.filter(function(s){return dueMonths(s)>0});
+  var today=list.filter(function(s){return s.remark&&s.remark.date===TODAY});
+  var missed=list.filter(function(s){return s.remark&&s.remark.date<TODAY});
+  var rest=list.filter(function(s){return today.indexOf(s)<0&&missed.indexOf(s)<0}).sort(function(a,b){return dueAmt(b)-dueAmt(a)});
+  var h="";
+  function sec(t,a){if(a.length)h+="<h2>"+t+" ("+a.length+")</h2>"+a.map(card).join("")}
+  sec("Promised to pay today",today);sec("Promise missed",missed);sec("Fees due",rest);
+  if(!list.length)h='<div class="empty">No pending fees. Every student is paid up.</div>';
+  $("p-dues").innerHTML=h;
+  $("sStud").textContent=db.students.length;
+  $("sDue").textContent=list.length;$("nDue").textContent=list.length;
+  $("sAmt").textContent=inr(list.reduce(function(t,s){return t+dueAmt(s)},0));
+}
+function renderStudents(){
+  var h='<div class="btns" style="margin:12px 0"><button class="b main" id="addStud">Add student</button></div>';
+  var l=db.students.slice().sort(function(a,b){return a.seat-b.seat});
+  h+=l.length?l.map(function(s){return'<div class="row"><div class="top"><div><span class="name">'+esc(s.name)+'</span><div class="meta">Seat '+s.seat+' · '+inr(s.fee)+'/month · '+s.phone+'</div></div><div class="meta">'+(dueMonths(s)?dueMonths(s)+" due":"Paid")+'</div></div><div class="btns"><button class="b danger" data-a="del" data-id="'+s.id+'">Delete</button></div></div>'}).join(""):'<div class="empty">No students yet. Add the first one.</div>';
+  $("p-students").innerHTML=h;
+}
+function renderSent(){
+  var l=db.sent.slice().reverse();
+  $("p-sent").innerHTML=l.length?'<h2>Reminders you sent</h2>'+l.map(function(m){return'<div class="row log"><div class="top"><span class="name">'+esc(m.name)+'</span><span class="meta">'+esc(m.channel)+'</span></div><div class="meta">'+esc(m.when)+'</div><div class="remark">'+esc(m.text)+'</div></div>'}).join(""):'<div class="empty">Nothing sent yet. Reminders you send from the Dues tab appear here.</div>';
+}
+function renderAll(){renderDues();renderStudents();renderSent()}
+
+function msg(s){
+  var t="Hello "+s.name+", this is Rehan Library. Your fee of "+inr(dueAmt(s))+" for "+dueMonths(s)+(dueMonths(s)===1?" month":" months")+" (seat "+s.seat+") is pending.";
+  if(s.remark&&s.remark.date>=TODAY)t+=" You told us you would pay on "+fmt(s.remark.date)+".";
+  return t+" Please pay at the library. Thank you.";
+}
+function logSend(s,channel,text){db.sent.push({name:s.name,channel:channel,text:text,when:new Date().toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})});save();renderAll()}
+function find(id){return db.students.filter(function(s){return s.id===+id})[0]}
+
+var TITLES={dues:"Fees due",students:"Students",sent:"Sent messages"};
+function show(k){document.querySelectorAll("[data-t]").forEach(function(b){if(b.dataset.t===k)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});["dues","students","sent"].forEach(function(x){$("p-"+x).hidden=x!==k});$("pageTitle").textContent=TITLES[k];window.scrollTo(0,0)}
+function setMenu(on){$("side").classList.toggle("open",on);$("scrim").classList.toggle("on",on);$("menu").setAttribute("aria-expanded",on)}
+document.addEventListener("keydown",function(e){if(e.key==="Escape")setMenu(false)});
+var curId=null;
+document.addEventListener("click",function(e){
+  var c=e.target.closest("[data-close]");if(c){c.closest("dialog").close();return}
+  if(e.target.id==="menu"){setMenu(true);return}
+  if(e.target.id==="scrim"){setMenu(false);return}
+  var tb=e.target.closest("[data-t]");
+  if(tb){show(tb.dataset.t);setMenu(false);return}
+  if(e.target.id==="addStud"){["sName","sPhone","sMail","sSeat","sFee"].forEach(function(i){$(i).value=""});$("sPlan").value="500";$("sFee").value="500";$("sPaid").value=NOW;$("sErr").textContent="";$("dStud").showModal();return}
+  var b=e.target.closest("[data-a]");if(!b)return;
+  var s=find(b.dataset.id),a=b.dataset.a;
+  if(a==="wa"){var t=msg(s);window.open("https://wa.me/91"+s.phone+"?text="+encodeURIComponent(t),"_blank");logSend(s,"WhatsApp",t);toast("WhatsApp opened for "+s.name)}
+  else if(a==="mail"){var t2=msg(s);window.location.href="mailto:"+s.email+"?subject="+encodeURIComponent("Library fee reminder")+"&body="+encodeURIComponent(t2);logSend(s,"Email",t2)}
+  else if(a==="rem"){curId=s.id;$("rTitle").textContent="Remark for "+s.name;$("rText").value=s.remark?s.remark.text:"";$("rDate").value=s.remark&&s.remark.date>=TODAY?s.remark.date:addDays(1);$("rDate").min=TODAY;$("rErr").textContent="";$("rClear").hidden=!s.remark;$("dRemark").showModal()}
+  else if(a==="paid"){s.paidUpTo=NOW;s.remark=null;save();renderAll();toast(s.name+" marked paid")}
+  else if(a==="del"){if(confirm("Delete "+s.name+"? This cannot be undone.")){db.students=db.students.filter(function(x){return x.id!==s.id});save();renderAll()}}
+});
+$("rSave").onclick=function(){
+  var t=$("rText").value.trim(),d=$("rDate").value;
+  if(!t){$("rErr").textContent="Write what the student said.";return}
+  if(!d||d<TODAY){$("rErr").textContent="Pick today or a later date.";return}
+  find(curId).remark={text:t,date:d};save();renderAll();$("dRemark").close();toast("Remark saved. You will be reminded on "+fmt(d))
+};
+$("rClear").onclick=function(){find(curId).remark=null;save();renderAll();$("dRemark").close()};
+$("sPlan").onchange=function(){$("sFee").value=$("sPlan").value};
+$("sSave").onclick=function(){
+  var n=$("sName").value.trim(),p=$("sPhone").value.trim(),seat=+$("sSeat").value,fee=+$("sFee").value,paid=$("sPaid").value,mail=$("sMail").value.trim();
+  var er="";
+  if(!n)er="Enter the student's name.";
+  else if(!/^[6-9]\d{9}$/.test(p))er="Enter a valid 10-digit mobile number.";
+  else if(mail&&!/^\S+@\S+\.\S+$/.test(mail))er="That email address looks wrong.";
+  else if(!(seat>=1&&seat<=184))er="Seat must be between 1 and 184.";
+  else if(db.students.some(function(s){return s.seat===seat}))er="Seat "+seat+" already has a student.";
+  else if(!(fee>0))er="Enter the monthly fee.";
+  else if(!paid)er="Pick the month fees are paid up to.";
+  if(er){$("sErr").textContent=er;return}
+  db.students.push({id:db.nextId++,name:n,phone:p,email:mail,seat:seat,fee:fee,paidUpTo:paid,remark:null});
+  save();renderAll();$("dStud").close();toast(n+" added")
+};
+renderAll();
+})();
+</script>
+</body>
+</html>
